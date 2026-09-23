@@ -1,9 +1,28 @@
+'use client'
+ 
+import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+ 
+export default function Home() {
+  const [landlords, setLandlords] = useState<any[]>([])
+const [search, setSearch] = useState('')
+const [error, setError] = useState<string | null>(null)
 
-export default async function Home() {
-  const { data: landlords, error } = await supabase
+useEffect(() => {
+  loadLandlords()
+}, [])
+
+async function loadLandlords() {
+  const { data, error } = await supabase
     .from('landlords')
     .select('*')
+
+  if (error) {
+    setError(error.message)
+  } else {
+    setLandlords(data || [])
+  }
+}
 
   return (
     <main className="min-h-screen bg-slate-50 p-6">
@@ -18,7 +37,7 @@ export default async function Home() {
 
         {error && (
           <div className="bg-red-100 p-4 rounded mb-4">
-            Error: {error.message}
+            Error: {error}
           </div>
         )}
 
