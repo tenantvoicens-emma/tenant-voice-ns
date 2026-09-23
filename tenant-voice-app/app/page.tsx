@@ -1,8 +1,10 @@
 'use client'
  
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
  
+
 export default function Home() {
   const [landlords, setLandlords] = useState<any[]>([])
   const [search, setSearch] = useState('')
@@ -83,13 +85,16 @@ className="w-full p-3 border rounded-xl mb-8"
             </div>
 
             <div className="mt-4 border-t pt-4 text-sm text-slate-600">
-              <p>Reviews: Coming Soon</p>
-              <p>Properties: Coming Soon</p>
-            </div>
-
-            <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700">
-              View Profile
-            </button>
+<p>Reviews: Coming Soon</p>
+<p>Properties: Coming Soon</p>
+</div>
+ 
+<Link
+href={`/landlord/${landlord.id}`}
+className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700"
+>
+  Read Reviews
+</Link>
           </div>
         ))}
       </div>
