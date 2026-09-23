@@ -5,8 +5,8 @@ import { supabase } from '../lib/supabase'
  
 export default function Home() {
   const [landlords, setLandlords] = useState<any[]>([])
-const [search, setSearch] = useState('')
-const [error, setError] = useState<string | null>(null)
+  const [search, setSearch] = useState('')
+  const [error, setError] = useState<string | null>(null)
 
 useEffect(() => {
   loadLandlords()
@@ -23,7 +23,9 @@ async function loadLandlords() {
     setLandlords(data || [])
   }
 }
-
+    const filteredLandlords = landlords.filter((landlord) =>
+       landlord.name.toLowerCase().includes(search.toLowerCase())
+)
   return (
     <main className="min-h-screen bg-slate-50 p-6">
       <div className="max-w-5xl mx-auto">
@@ -35,13 +37,21 @@ async function loadLandlords() {
           Helping Nova Scotia renters make informed housing decisions.
         </p>
 
+        <input
+type="text"
+placeholder="Search landlords..."
+value={search}
+onChange={(e) => setSearch(e.target.value)}
+className="w-full p-3 border rounded-xl mb-8"
+/>
+
         {error && (
           <div className="bg-red-100 p-4 rounded mb-4">
             Error: {error}
           </div>
         )}
 
-        {landlords?.map((landlord) => (
+        {filteredLandlords.map((landlord) => (
           <div
             key={landlord.id}
             className="bg-white rounded-2xl shadow-lg p-6 mb-5 border border-slate-100 hover:shadow-xl transition"
