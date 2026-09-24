@@ -20,6 +20,15 @@ export default async function LandlordPage({
 .eq('landlord_id', Number(id))
 .eq('status', 'approved')
 
+const averageRating =
+  reviews && reviews.length > 0
+    ? (
+        reviews.reduce(
+          (sum, review) => sum + review.overall_rating,
+          0
+        ) / reviews.length
+      ).toFixed(1)
+    : null
 
   if (!landlord) {
     return (
@@ -38,6 +47,12 @@ export default async function LandlordPage({
           <h1 className="text-4xl font-bold">
             {landlord.name}
           </h1>
+
+{averageRating && (
+<div className="mt-2 text-yellow-500 text-xl">
+★ {averageRating} ({reviews?.length || 0} reviews)
+</div>
+)}
 
           <p className="text-slate-500 mt-2">
             {landlord.landlord_type}
