@@ -15,15 +15,45 @@ useEffect(() => {
 }, [])
 
 async function loadLandlords() {
-  const { data, error } = await supabase
-    .from('landlords')
-    .select('*')
+  const { data: landlordData, error } = await supabase
+  .from('landlords')
+  .select('*')
 
-  if (error) {
-    setError(error.message)
-  } else {
-    setLandlords(data || [])
-  }
+if (error) {
+  setError(error.message)
+  return
+}
+
+const landlordsWithRatings = await Promise.all(
+  (landlordData || []).map(async (landlord) => {
+    const { data: reviews } = await supabase
+      .from('reviews')
+      .select('*')
+      .eq('landlord_id', landlord.id)
+      .eq('status', 'approved')
+
+    const reviewCount = reviews?.length || 0
+
+    const averageRating =
+      reviewCount > 0
+        ? (
+            (reviews || []).reduce(
+              (sum, review) => sum + review.overall_rating,
+              0
+            ) / reviewCount
+          ).toFixed(1)
+        : null
+
+    return {
+      ...landlord,
+      reviewCount,
+      averageRating,
+    }
+  })
+)
+
+setLandlords(landlordsWithRatings)
+
 }
     const filteredLandlords = landlords.filter((landlord) =>
        landlord.name.toLowerCase().includes(search.toLowerCase())
@@ -69,9 +99,23 @@ className="w-full p-3 border rounded-xl mb-8"
                 </p>
               </div>
 
-              <div className="text-yellow-500 text-xl">
-                ★★★★☆
-              </div>
+              <div className="text-right">
+  {landlord.averageRating ? (
+    <>
+      <div className="text-yellow-500 text-xl">
+        ★ {landlord.averageRating}
+      </div>
+
+      <div className="text-sm text-slate-500">
+        {landlord.reviewCount} Reviews
+      </div>
+    </>
+  ) : (
+    <div className="text-sm text-slate-400">
+      No Reviews Yet
+    </div>
+  )}
+</div>
             </div>
 
             <div className="mt-4 flex gap-2 flex-wrap">
