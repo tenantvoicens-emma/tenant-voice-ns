@@ -14,6 +14,13 @@ export default async function LandlordPage({
     .eq('id', Number(id))
     .single()
 
+  const { data: reviews } = await supabase
+.from('reviews')
+.select('*')
+.eq('landlord_id', Number(id))
+.eq('status', 'approved')
+
+
   if (!landlord) {
     return (
       <div>
@@ -44,15 +51,34 @@ export default async function LandlordPage({
 
 <ReviewForm landlordId={landlord.id} />
 
-          <div className="mt-8 border-t pt-6">
-<h2 className="text-2xl font-semibold mb-4">
-Reviews
+     <div className="mt-8 border-t pt-6">
+
+      <h2 className="text-2xl font-semibold mb-4">
+Reviews ({reviews?.length || 0})
 </h2>
 
-            <p className="text-slate-600">
-              Reviews coming soon.
-            </p>
-          </div>
+
+  {reviews && reviews.length > 0 ? (
+    reviews.map((review) => (
+      <div
+        key={review.id}
+        className="bg-slate-50 rounded-xl p-4 mb-4"
+      >
+        <div className="text-yellow-500 text-lg">
+          {'★'.repeat(review.overall_rating)}
+        </div>
+
+        <p className="mt-2 text-slate-700">
+          {review.review_text}
+        </p>
+      </div>
+    ))
+  ) : (
+    <p className="text-slate-600">
+      No approved reviews yet.
+    </p>
+  )}
+</div>     
 
           <div className="mt-8 border-t pt-6">
             <h2 className="text-2xl font-semibold mb-4">
