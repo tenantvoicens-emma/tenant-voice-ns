@@ -1,4 +1,5 @@
 import { supabase } from '../../../lib/supabase'
+import ReviewForm from '../../../components/ReviewForm'
 
 export default async function LandlordPage({
   params,
@@ -41,10 +42,12 @@ export default async function LandlordPage({
             </span>
           </div>
 
+<ReviewForm landlordId={landlord.id} />
+
           <div className="mt-8 border-t pt-6">
-            <h2 className="text-2xl font-semibold mb-4">
-              Reviews
-            </h2>
+<h2 className="text-2xl font-semibold mb-4">
+Reviews
+</h2>
 
             <p className="text-slate-600">
               Reviews coming soon.
