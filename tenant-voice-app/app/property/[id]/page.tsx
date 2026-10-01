@@ -1,4 +1,6 @@
+import Link from 'next/link'
 import { supabase } from '../../../lib/supabase'
+
 
 export default async function PropertyPage({
   params,
@@ -8,10 +10,13 @@ export default async function PropertyPage({
   const { id } = await params
 
   const { data: property } = await supabase
-    .from('properties')
-    .select('*')
-    .eq('id', Number(id))
-    .single()
+  .from('properties')
+  .select(`
+    *,
+    landlords (*)
+  `)
+  .eq('id', Number(id))
+  .single()
 
   if (!property) {
     return (
@@ -40,6 +45,22 @@ export default async function PropertyPage({
           <p className="mt-4">
             Property Type: {property.property_type}
           </p>
+
+    <div className="mt-6 border-t pt-6">
+        <h2 className="text-xl font-bold mb-2">
+        Managed By
+  </h2>
+
+<Link
+  href={`/landlord/${property.landlords?.id}`}
+  className="text-blue-600 hover:text-blue-800 hover:underline"
+>
+  {property.landlords?.name}
+</Link>
+
+
+</div>
+
         </div>
       </div>
     </main>
