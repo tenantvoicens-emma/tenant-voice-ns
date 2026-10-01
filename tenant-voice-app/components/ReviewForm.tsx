@@ -13,8 +13,18 @@ export default function ReviewForm({
   const [rating, setRating] = useState(5)
   const [reviewText, setReviewText] = useState('')
   const [message, setMessage] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
-  async function submitReview() {
+async function submitReview() {
+  if (!reviewText.trim()) {
+    setMessage('Please enter a review.')
+    return
+  }
+
+  setMessage('')
+  setSubmitting(true)
+
+  try {
     const { error } = await supabase
       .from('reviews')
       .insert([
@@ -34,7 +44,10 @@ export default function ReviewForm({
       setReviewText('')
       setRating(5)
     }
+  } finally {
+    setSubmitting(false)
   }
+}
 
   return (
     <div className="mt-8 border-t pt-6">
@@ -62,12 +75,16 @@ export default function ReviewForm({
         placeholder="Describe your experience..."
       />
 
-      <button
-        onClick={submitReview}
-        className="mt-4 bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700"
-      >
-        Submit Review
-      </button>
+<button
+  type="button"
+  onClick={submitReview}
+  disabled={submitting}
+  className="bg-blue-600 text-white px-4 py-2 rounded-xl disabled:bg-slate-400"
+>
+  {submitting ? 'Submitting...' : 'Submit Review'}
+</button>
+
+
 
       {message && (
         <p className="mt-3 text-green-600">
