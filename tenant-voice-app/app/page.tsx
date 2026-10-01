@@ -8,7 +8,39 @@ import { supabase } from '../lib/supabase'
 export default function Home() {
   const [landlords, setLandlords] = useState<any[]>([])
   const [search, setSearch] = useState('')
+  const [suggestions, setSuggestions] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
+
+useEffect(() => {
+  if (!search.trim()) {
+    setSuggestions([])
+    return
+  }
+
+  const landlordNames = landlords.map(
+    (landlord) => landlord.name
+  )
+
+  const propertyAddresses = landlords.flatMap(
+    (landlord) =>
+      landlord.properties?.map(
+        (property: any) => property.address
+      ) || []
+  )
+
+  const allSuggestions = [
+    ...landlordNames,
+    ...propertyAddresses,
+  ]
+
+  const filtered = allSuggestions
+    .filter((item) =>
+      item.toLowerCase().includes(search.toLowerCase())
+    )
+    .slice(0, 5)
+
+  setSuggestions(filtered)
+}, [search, landlords])
 
 useEffect(() => {
   loadLandlords()
@@ -26,6 +58,8 @@ if (error) {
   setError(error.message)
   return
 }
+
+
 
 const landlordsWithRatings = await Promise.all(
   (landlordData || []).map(async (landlord) => {
@@ -91,6 +125,23 @@ onChange={(e) => setSearch(e.target.value)}
 className="w-full p-3 border rounded-xl mb-8"
 />
 
+{suggestions.length > 0 && (
+  <div className="bg-white border rounded-xl shadow mb-6">
+    {suggestions.map((suggestion) => (
+      <button
+        key={suggestion}
+        onClick={() => {
+          setSearch(suggestion)
+          setSuggestions([])
+        }}
+        className="block w-full text-left px-4 py-3 hover:bg-slate-100"
+      >
+        {suggestion}
+      </button>
+    ))}
+  </div>
+)}
+
         {error && (
           <div className="bg-red-100 p-4 rounded mb-4">
             Error: {error}
@@ -145,9 +196,6 @@ className="w-full p-3 border rounded-xl mb-8"
             <div className="mt-4 border-t pt-4 text-sm text-slate-600">
 <p>Reviews: Coming Soon</p>
 
-<p className="font-medium mb-2">
-  Properties:
-</p>
 
 <p className="font-medium mb-2">
   Properties:
