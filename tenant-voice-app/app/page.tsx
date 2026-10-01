@@ -17,7 +17,10 @@ useEffect(() => {
 async function loadLandlords() {
   const { data: landlordData, error } = await supabase
   .from('landlords')
-  .select('*')
+  .select(`
+    *,
+    properties (*)
+  `)
 
 if (error) {
   setError(error.message)
@@ -55,9 +58,20 @@ const landlordsWithRatings = await Promise.all(
 setLandlords(landlordsWithRatings)
 
 }
-    const filteredLandlords = landlords.filter((landlord) =>
-       landlord.name.toLowerCase().includes(search.toLowerCase())
-)
+    const filteredLandlords = landlords.filter((landlord) => {
+  const nameMatch =
+    landlord.name.toLowerCase().includes(search.toLowerCase())
+
+  const addressMatch =
+    landlord.properties?.some((property: any) =>
+      property.address
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    )
+
+  return nameMatch || addressMatch
+})
+
   return (
     <main className="min-h-screen bg-slate-50 p-6">
       <div className="max-w-5xl mx-auto">
@@ -71,7 +85,7 @@ setLandlords(landlordsWithRatings)
 
         <input
 type="text"
-placeholder="Search landlords..."
+placeholder="Search landlords or addresses..."
 value={search}
 onChange={(e) => setSearch(e.target.value)}
 className="w-full p-3 border rounded-xl mb-8"
@@ -130,8 +144,27 @@ className="w-full p-3 border rounded-xl mb-8"
 
             <div className="mt-4 border-t pt-4 text-sm text-slate-600">
 <p>Reviews: Coming Soon</p>
-<p>Properties: Coming Soon</p>
+
+<p className="font-medium mb-2">
+  Properties:
+</p>
+
+<p className="font-medium mb-2">
+  Properties:
+</p>
+
+{landlord.properties?.slice(0, 3).map((property: any) => (
+  <p
+    key={property.id}
+    className="text-sm text-slate-500"
+  >
+    {property.address}
+  </p>
+))}
+
 </div>
+
+
  
 <Link
 href={`/landlord/${landlord.id}`}
