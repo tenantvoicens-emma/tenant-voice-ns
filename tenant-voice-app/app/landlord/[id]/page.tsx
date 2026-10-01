@@ -1,5 +1,6 @@
 import { supabase } from '../../../lib/supabase'
 import ReviewForm from '../../../components/ReviewForm'
+import ReviewList from '../../../components/ReviewList'
 
 export default async function LandlordPage({
   params,
@@ -102,30 +103,14 @@ const averageRating =
   )}
 </div>
 
-Reviews ({reviews?.length || 0})
+<h2 className="text-2xl font-bold mb-4">
+  Reviews ({reviews?.length || 0})
 </h2>
 
 
-  {reviews && reviews.length > 0 ? (
-    reviews.map((review) => (
-      <div
-        key={review.id}
-        className="bg-slate-50 rounded-xl p-4 mb-4"
-      >
-        <div className="text-yellow-500 text-lg">
-          {'★'.repeat(review.overall_rating)}
-        </div>
+<ReviewList reviews={reviews || []} />
 
-        <p className="mt-2 text-slate-700">
-          {review.review_text}
-        </p>
-      </div>
-    ))
-  ) : (
-    <p className="text-slate-600">
-      No approved reviews yet.
-    </p>
-  )}
+
 </div>     
 
           
