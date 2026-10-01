@@ -62,18 +62,31 @@ export default function ReviewList({
 
       <div className="space-y-4">
         {sortedReviews.map((review) => (
-          <div
-            key={review.id}
-            className="bg-slate-50 rounded-xl p-4"
-          >
-            <div className="text-yellow-500 text-lg">
-              {'★'.repeat(review.overall_rating)}
-            </div>
+         <div
+  key={review.id}
+  className="bg-slate-50 rounded-xl p-4"
+>
+  <div className="flex justify-between items-center">
+    <div className="text-yellow-500 text-lg">
+      {'★'.repeat(review.overall_rating)}
+    </div>
 
-            <p className="mt-2 text-slate-700">
-              {review.review_text}
-            </p>
-          </div>
+    <div className="text-sm text-slate-500">
+      {new Date(review.created_at).toLocaleDateString(
+  'en-CA',
+  {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }
+)}
+    </div>
+  </div>
+
+  <p className="mt-2 text-slate-700">
+    {review.review_text}
+  </p>
+</div>
         ))}
       </div>
     </div>
