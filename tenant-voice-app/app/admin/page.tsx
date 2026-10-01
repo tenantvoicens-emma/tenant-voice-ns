@@ -6,9 +6,44 @@ import { supabase } from '../../lib/supabase'
 export default function AdminPage() {
   const [reviews, setReviews] = useState<any[]>([])
 
+  const [stats, setStats] = useState({
+    pendingReviews: 0,
+    approvedReviews: 0,
+    landlords: 0,
+    properties: 0,
+  })
+
   useEffect(() => {
     loadReviews()
+    loadStats()
   }, [])
+
+  async function loadStats() {
+    const { count: pendingReviews } = await supabase
+      .from('reviews')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'pending')
+
+    const { count: approvedReviews } = await supabase
+      .from('reviews')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'approved')
+
+    const { count: landlords } = await supabase
+      .from('landlords')
+      .select('*', { count: 'exact', head: true })
+
+    const { count: properties } = await supabase
+      .from('properties')
+      .select('*', { count: 'exact', head: true })
+
+    setStats({
+      pendingReviews: pendingReviews || 0,
+      approvedReviews: approvedReviews || 0,
+      landlords: landlords || 0,
+      properties: properties || 0,
+    })
+  }
 
   async function loadReviews() {
     const { data, error } = await supabase
@@ -26,52 +61,90 @@ export default function AdminPage() {
     }
   }
 
-async function approveReview(reviewId: number) {
-  console.log('Approving review:', reviewId)
+  async function approveReview(reviewId: number) {
+    console.log('Approving review:', reviewId)
 
+    const { data, error } = await supabase
+      .from('reviews')
+      .update({
+        status: 'approved',
+      })
+      .eq('id', reviewId)
+      .select()
 
-const { data, error } = await supabase
-  .from('reviews')
-  .update({
-    status: 'approved',
-  })
-  .eq('id', reviewId)
-  .select()
+    console.log('Updated data:', data)
+    console.log('Update error:', error)
 
-console.log('Updated data:', data)
-console.log('Update error:', error)
-
-  console.log('Updated row:', data)
-  console.log('Update error:', error)
-
-  if (!error) {
-    loadReviews()
+    if (error) {
+      console.error(error)
+    } else {
+      loadReviews()
+      loadStats()
+    }
   }
-}
 
-async function rejectReview(reviewId: number) {
-  console.log('Rejecting review:', reviewId)
+  async function rejectReview(reviewId: number) {
+    console.log('Rejecting review:', reviewId)
 
-  const { error } = await supabase
-    .from('reviews')
-    .delete()
-    .eq('id', reviewId)
+    const { error } = await supabase
+      .from('reviews')
+      .delete()
+      .eq('id', reviewId)
 
-  console.log('Delete error:', error)
+    console.log('Delete error:', error)
 
-  if (error) {
-    console.error(error)
-  } else {
-    loadReviews()
+    if (error) {
+      console.error(error)
+    } else {
+      loadReviews()
+      loadStats()
+    }
   }
-}
 
   return (
     <main className="min-h-screen bg-slate-50 p-6">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-6">
-          Pending Reviews
+          Tenant Voice Admin
         </h1>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white p-4 rounded-xl shadow">
+            <p className="text-sm text-slate-500">
+              Pending Reviews
+            </p>
+            <p className="text-3xl font-bold">
+              {stats.pendingReviews}
+            </p>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl shadow">
+            <p className="text-sm text-slate-500">
+              Approved Reviews
+            </p>
+            <p className="text-3xl font-bold">
+              {stats.approvedReviews}
+            </p>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl shadow">
+            <p className="text-sm text-slate-500">
+              Landlords
+            </p>
+            <p className="text-3xl font-bold">
+              {stats.landlords}
+            </p>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl shadow">
+            <p className="text-sm text-slate-500">
+              Properties
+            </p>
+            <p className="text-3xl font-bold">
+              {stats.properties}
+            </p>
+          </div>
+        </div>
 
         {reviews.length === 0 ? (
           <p className="text-slate-500">
