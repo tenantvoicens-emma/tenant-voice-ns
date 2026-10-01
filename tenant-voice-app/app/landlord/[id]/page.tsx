@@ -10,31 +10,29 @@ export default async function LandlordPage({
   const { id } = await params
 
   const { data: landlord } = await supabase
-  .from('landlords')
-  .select(`
-    *,
-    properties (*)
-  `)
-  .eq('id', Number(id))
-  .single()
-
-  
+    .from('landlords')
+    .select(`
+      *,
+      properties (*)
+    `)
+    .eq('id', Number(id))
+    .single()
 
   const { data: reviews } = await supabase
-.from('reviews')
-.select('*')
-.eq('landlord_id', Number(id))
-.eq('status', 'approved')
+    .from('reviews')
+    .select('*')
+    .eq('landlord_id', Number(id))
+    .eq('status', 'approved')
 
-const averageRating =
-  reviews && reviews.length > 0
-    ? (
-        reviews.reduce(
-          (sum, review) => sum + review.overall_rating,
-          0
-        ) / reviews.length
-      ).toFixed(1)
-    : null
+  const averageRating =
+    reviews && reviews.length > 0
+      ? (
+          reviews.reduce(
+            (sum, review) => sum + review.overall_rating,
+            0
+          ) / reviews.length
+        ).toFixed(1)
+      : null
 
   if (!landlord) {
     return (
@@ -54,11 +52,11 @@ const averageRating =
             {landlord.name}
           </h1>
 
-{averageRating && (
-<div className="mt-2 text-yellow-500 text-xl">
-★ {averageRating} ({reviews?.length || 0} reviews)
-</div>
-)}
+          {averageRating && (
+            <div className="mt-2 text-yellow-500 text-xl">
+              ★ {averageRating} ({reviews?.length || 0} reviews)
+            </div>
+          )}
 
           <p className="text-slate-500 mt-2">
             {landlord.landlord_type}
@@ -70,51 +68,42 @@ const averageRating =
             </span>
           </div>
 
-<ReviewForm landlordId={landlord.id} />
+          <ReviewForm landlordId={landlord.id} />
 
-     <div className="mt-8 border-t pt-6">
+          <div className="mt-8 border-t pt-6">
+            <div className="bg-white rounded-xl p-6 shadow mb-6">
+              <h2 className="text-xl font-bold mb-4">
+                Properties Managed ({landlord.properties?.length || 0})
+              </h2>
 
-      <h2 className="text-2xl font-semibold mb-4">
+              {landlord.properties?.length > 0 ? (
+                landlord.properties.map((property: any) => (
+                  <div
+                    key={property.id}
+                    className="border-b py-2 last:border-b-0"
+                  >
+                    <p className="font-medium">
+                      {property.address}
+                    </p>
 
-<div className="bg-white rounded-xl p-6 shadow mb-6">
-  <h2 className="text-xl font-bold mb-4">
-  Properties Managed ({landlord.properties?.length || 0})
-</h2>
+                    <p className="text-sm text-slate-500">
+                      {property.city}, {property.province}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-slate-500">
+                  No properties listed yet.
+                </p>
+              )}
+            </div>
 
-  {landlord.properties?.length > 0 ? (
-    landlord.properties.map((property: any) => (
-      <div
-        key={property.id}
-        className="border-b py-2 last:border-b-0"
-      >
-        <p className="font-medium">
-          {property.address}
-        </p>
+            <h2 className="text-2xl font-bold mb-4">
+              Reviews ({reviews?.length || 0})
+            </h2>
 
-        <p className="text-sm text-slate-500">
-          {property.city}, {property.province}
-        </p>
-      </div>
-    ))
-  ) : (
-    <p className="text-slate-500">
-      No properties listed yet.
-    </p>
-  )}
-</div>
-
-<h2 className="text-2xl font-bold mb-4">
-  Reviews ({reviews?.length || 0})
-</h2>
-
-
-<ReviewList reviews={reviews || []} />
-
-
-</div>     
-
-          
-          
+            <ReviewList reviews={reviews || []} />
+          </div>
         </div>
       </div>
     </main>
