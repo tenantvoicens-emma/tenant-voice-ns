@@ -18,6 +18,24 @@ export default async function PropertyPage({
   .eq('id', Number(id))
   .single()
 
+const { data: reviews } = await supabase
+  .from('reviews')
+  .select('*')
+  .eq('property_id', Number(id))
+  .eq('status', 'approved')
+
+const reviewCount = reviews?.length || 0
+
+const averageRating =
+  reviewCount > 0
+    ? (
+        (reviews || []).reduce(
+          (sum, review) => sum + review.overall_rating,
+          0
+        ) / reviewCount
+      ).toFixed(1)
+    : null
+
   if (!property) {
     return (
       <div>
@@ -33,6 +51,12 @@ export default async function PropertyPage({
           <h1 className="text-4xl font-bold">
             {property.address}
           </h1>
+
+                {averageRating && (
+                  <div className="mt-2 text-yellow-500 text-xl">
+                    ★ {averageRating} ({reviewCount} reviews)
+                  </div>
+                )}
 
           <p className="mt-4 text-slate-600">
             {property.city}, {property.province}
