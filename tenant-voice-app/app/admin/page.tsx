@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase'
 
 export default function AdminPage() {
   const [reviews, setReviews] = useState<any[]>([])
+  const [reports, setReports] = useState<any[]>([])
 
   const [stats, setStats] = useState({
     pendingReviews: 0,
@@ -15,6 +16,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     loadReviews()
+    loadReports()
     loadStats()
   }, [])
 
@@ -58,6 +60,19 @@ export default function AdminPage() {
       console.error(error)
     } else {
       setReviews(data || [])
+    }
+  }
+
+  async function loadReports() {
+    const { data, error } = await supabase
+      .from('reports')
+      .select('*')
+      .eq('status', 'pending')
+
+    if (error) {
+      console.error(error)
+    } else {
+      setReports(data || [])
     }
   }
 
@@ -190,6 +205,40 @@ export default function AdminPage() {
             </div>
           ))
         )}
+
+        <div className="mt-10">
+          <h2 className="text-2xl font-bold mb-4">
+            Reported Reviews
+          </h2>
+
+          {reports.length === 0 ? (
+            <p className="text-slate-500">
+              No pending reports.
+            </p>
+          ) : (
+            reports.map((report) => (
+              <div
+                key={report.id}
+                className="bg-white rounded-xl shadow p-4 mb-4"
+              >
+                <p>
+                  <strong>Review ID:</strong>{' '}
+                  {report.review_id}
+                </p>
+
+                <p>
+                  <strong>Reason:</strong>{' '}
+                  {report.reason}
+                </p>
+
+                <p>
+                  <strong>Status:</strong>{' '}
+                  {report.status}
+                </p>
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </main>
   )
