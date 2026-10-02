@@ -72,9 +72,18 @@ export default function AdminPage() {
 
   async function loadReports() {
     const { data, error } = await supabase
-      .from('reports')
-      .select('*')
-      .eq('status', 'pending')
+  .from('reports')
+  .select(`
+    *,
+    reviews (
+      review_text,
+      overall_rating,
+      landlords (
+        name
+      )
+    )
+  `)
+  .eq('status', 'pending')
 
     if (error) {
       console.error(error)
@@ -255,9 +264,16 @@ return (
                 key={report.id}
                 className="bg-white rounded-xl shadow p-4 mb-4"
               >
-                <p>
-                  <strong>Review ID:</strong>{' '}
-                  {report.review_id}
+                <h3 className="font-bold text-lg">
+                  {report.reviews?.landlords?.name}
+                </h3>
+
+                <p className="text-yellow-500 mt-1">
+                  ★ {report.reviews?.overall_rating}
+                </p>
+
+                <p className="mt-3">
+                  {report.reviews?.review_text}
                 </p>
 
                 <p>
