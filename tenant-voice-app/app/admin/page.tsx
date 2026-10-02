@@ -8,11 +8,12 @@ export default function AdminPage() {
   const [reports, setReports] = useState<any[]>([])
 
   const [stats, setStats] = useState({
-    pendingReviews: 0,
-    approvedReviews: 0,
-    landlords: 0,
-    properties: 0,
-  })
+  pendingReviews: 0,
+  approvedReviews: 0,
+  pendingReports: 0,
+  landlords: 0,
+  properties: 0,
+})
 
   useEffect(() => {
     loadReviews()
@@ -31,6 +32,11 @@ export default function AdminPage() {
       .select('*', { count: 'exact', head: true })
       .eq('status', 'approved')
 
+    const { count: pendingReports } = await supabase
+  .from('reports')
+  .select('*', { count: 'exact', head: true })
+  .eq('status', 'pending')
+
     const { count: landlords } = await supabase
       .from('landlords')
       .select('*', { count: 'exact', head: true })
@@ -39,12 +45,13 @@ export default function AdminPage() {
       .from('properties')
       .select('*', { count: 'exact', head: true })
 
-    setStats({
-      pendingReviews: pendingReviews || 0,
-      approvedReviews: approvedReviews || 0,
-      landlords: landlords || 0,
-      properties: properties || 0,
-    })
+  setStats({
+  pendingReviews: pendingReviews || 0,
+  approvedReviews: approvedReviews || 0,
+  pendingReports: pendingReports || 0,
+  landlords: landlords || 0,
+  properties: properties || 0,
+})
   }
 
   async function loadReviews() {
@@ -124,11 +131,12 @@ async function resolveReport(reportId: number) {
     })
     .eq('id', reportId)
 
-  if (error) {
-    console.error(error)
-  } else {
-    loadReports()
-  }
+if (error) {
+  console.error(error)
+} else {
+  loadReports()
+  loadStats()
+}
 }
 
 return (
@@ -155,6 +163,16 @@ return (
             </p>
             <p className="text-3xl font-bold">
               {stats.approvedReviews}
+            </p>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl shadow">
+            <p className="text-sm text-slate-500">
+              Pending Reports
+            </p>
+
+            <p className="text-3xl font-bold">
+              {stats.pendingReports}
             </p>
           </div>
 
