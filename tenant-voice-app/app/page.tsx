@@ -10,6 +10,10 @@ export default function Home() {
   const [search, setSearch] = useState('')
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [userEmail, setUserEmail] = useState<string | null>(null)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [authMessage, setAuthMessage] = useState('')
 
 useEffect(() => {
   if (!search.trim()) {
@@ -44,6 +48,7 @@ useEffect(() => {
 
 useEffect(() => {
   loadLandlords()
+  checkUser()
 }, [])
 
 async function loadLandlords() {
@@ -58,8 +63,6 @@ if (error) {
   setError(error.message)
   return
 }
-
-
 
 const landlordsWithRatings = await Promise.all(
   (landlordData || []).map(async (landlord) => {
@@ -92,7 +95,32 @@ const landlordsWithRatings = await Promise.all(
 setLandlords(landlordsWithRatings)
 
 }
-    const filteredLandlords = landlords.filter((landlord) => {
+
+async function checkUser() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  setUserEmail(user?.email || null)
+}
+
+async function signUp() {
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+  })
+
+  if (error) {
+    setAuthMessage(error.message)
+  } else {
+    setAuthMessage(
+      'Account created. Check your email if confirmation is required.'
+    )
+
+    checkUser()
+  }
+}
+  const filteredLandlords = landlords.filter((landlord) => {
   const nameMatch =
     landlord.name.toLowerCase().includes(search.toLowerCase())
 
@@ -116,6 +144,45 @@ setLandlords(landlordsWithRatings)
         <p className="text-slate-500 mb-8">
           Helping Nova Scotia renters make informed housing decisions.
         </p>
+
+        <p className="text-sm text-slate-500 mb-4">
+          Current User: {userEmail || 'Not signed in'}
+        </p>
+
+        <div className="bg-white rounded-xl shadow p-4 mb-6">
+  <h2 className="font-bold mb-3">
+    Create Account
+  </h2>
+
+  <input
+    type="email"
+    placeholder="Email"
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    className="w-full p-3 border rounded-xl mb-3"
+  />
+
+  <input
+    type="password"
+    placeholder="Password"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    className="w-full p-3 border rounded-xl mb-3"
+  />
+
+  <button
+    onClick={signUp}
+    className="bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700"
+  >
+    Create Account
+  </button>
+
+  {authMessage && (
+    <p className="mt-3 text-sm text-slate-600">
+      {authMessage}
+    </p>
+  )}
+</div>
 
         <input
 type="text"
