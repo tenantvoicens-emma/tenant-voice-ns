@@ -76,47 +76,63 @@ export default function AdminPage() {
     }
   }
 
-  async function approveReview(reviewId: number) {
-    console.log('Approving review:', reviewId)
+ async function approveReview(reviewId: number) {
+  console.log('Approving review:', reviewId)
 
-    const { data, error } = await supabase
-      .from('reviews')
-      .update({
-        status: 'approved',
-      })
-      .eq('id', reviewId)
-      .select()
+  const { data, error } = await supabase
+    .from('reviews')
+    .update({
+      status: 'approved',
+    })
+    .eq('id', reviewId)
+    .select()
 
-    console.log('Updated data:', data)
-    console.log('Update error:', error)
+  console.log('Updated data:', data)
+  console.log('Update error:', error)
 
-    if (error) {
-      console.error(error)
-    } else {
-      loadReviews()
-      loadStats()
-    }
+  if (error) {
+    console.error(error)
+  } else {
+    loadReviews()
+    loadStats()
   }
+}
 
-  async function rejectReview(reviewId: number) {
-    console.log('Rejecting review:', reviewId)
+async function rejectReview(reviewId: number) {
+  console.log('Rejecting review:', reviewId)
 
-    const { error } = await supabase
-      .from('reviews')
-      .delete()
-      .eq('id', reviewId)
+  const { error } = await supabase
+    .from('reviews')
+    .delete()
+    .eq('id', reviewId)
 
-    console.log('Delete error:', error)
+  console.log('Delete error:', error)
 
-    if (error) {
-      console.error(error)
-    } else {
-      loadReviews()
-      loadStats()
-    }
+  if (error) {
+    console.error(error)
+  } else {
+    loadReviews()
+    loadStats()
   }
+}
 
-  return (
+async function resolveReport(reportId: number) {
+  const { error } = await supabase
+    .from('reports')
+    .update({
+      status: 'resolved',
+    })
+    .eq('id', reportId)
+
+  if (error) {
+    console.error(error)
+  } else {
+    loadReports()
+  }
+}
+
+return (
+ 
     <main className="min-h-screen bg-slate-50 p-6">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-6">
@@ -235,6 +251,16 @@ export default function AdminPage() {
                   <strong>Status:</strong>{' '}
                   {report.status}
                 </p>
+
+            <div className="mt-3">
+  <button
+    onClick={() => resolveReport(report.id)}
+    className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700"
+  >
+    Resolve
+  </button>
+</div>
+
               </div>
             ))
           )}
