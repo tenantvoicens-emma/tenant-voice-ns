@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { supabase } from '../../../lib/supabase'
+import ReviewList from '../../../components/ReviewList'
 
 
 export default async function PropertyPage({
@@ -75,15 +76,21 @@ const averageRating =
         Managed By
   </h2>
 
-<Link
-  href={`/landlord/${property.landlords?.id}`}
-  className="text-blue-600 hover:text-blue-800 hover:underline"
->
-  {property.landlords?.name}
-</Link>
+      <Link
+        href={`/landlord/${property.landlords?.id}`}
+        className="text-blue-600 hover:text-blue-800 hover:underline"
+      >
+        {property.landlords?.name}
+      </Link>
+      </div>
 
+        <div className="mt-8 border-t pt-6">
+          <h2 className="text-2xl font-bold mb-4">
+            Reviews ({reviewCount})
+          </h2>
 
-</div>
+          <ReviewList reviews={reviews || []} />
+        </div>
 
         </div>
       </div>
