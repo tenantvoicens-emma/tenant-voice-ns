@@ -68,7 +68,10 @@ export default async function LandlordPage({
             </span>
           </div>
 
-          <ReviewForm landlordId={landlord.id} />
+          <ReviewForm
+             landlordId={landlord.id}
+             properties={landlord.properties || []}
+          />
 
           <div className="mt-8 border-t pt-6">
             <div className="bg-white rounded-xl p-6 shadow mb-6">
