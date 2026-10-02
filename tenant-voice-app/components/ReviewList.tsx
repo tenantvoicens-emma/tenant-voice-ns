@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { supabase } from '../lib/supabase'
 
 type Props = {
   reviews: any[]
@@ -10,6 +11,25 @@ export default function ReviewList({
   reviews,
 }: Props) {
   const [sortBy, setSortBy] = useState('newest')
+  const [reportReason, setReportReason] = useState('Spam')
+
+  async function reportReview(reviewId: number) {
+  const { error } = await supabase
+    .from('reports')
+    .insert([
+      {
+        review_id: reviewId,
+        reason: reportReason,
+      },
+    ])
+
+  if (error) {
+    console.error(error)
+    alert('Failed to report review.')
+  } else {
+    alert('Review reported.')
+  }
+}
 
   const sortedReviews = [...reviews].sort((a, b) => {
     if (sortBy === 'highest') {
@@ -86,7 +106,27 @@ export default function ReviewList({
   <p className="mt-2 text-slate-700">
     {review.review_text}
   </p>
-</div>
+
+  <select
+  value={reportReason}
+  onChange={(e) => setReportReason(e.target.value)}
+  className="mt-3 mr-3 border rounded-lg px-2 py-1 text-sm"
+>
+  <option>Spam</option>
+  <option>Fake Review</option>
+  <option>Harassment</option>
+  <option>Duplicate</option>
+  <option>Other</option>
+</select>
+
+    <button
+    onClick={() => reportReview(review.id)}
+    className="mt-3 text-sm text-red-600 hover:underline"
+    >
+      Report Review
+    </button>
+
+          </div>
         ))}
       </div>
     </div>
