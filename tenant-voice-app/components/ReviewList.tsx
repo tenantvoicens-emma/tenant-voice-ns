@@ -11,25 +11,34 @@ export default function ReviewList({
   reviews,
 }: Props) {
   const [sortBy, setSortBy] = useState('newest')
-  const [reportReason, setReportReason] = useState('Spam')
+
+  const [reportReasons, setReportReasons] = useState<
+    Record<number, string>
+  >({})
 
   async function reportReview(reviewId: number) {
-  const { error } = await supabase
-    .from('reports')
-    .insert([
-      {
-        review_id: reviewId,
-        reason: reportReason,
-      },
-    ])
+    const { error } = await supabase
+      .from('reports')
+      .insert([
+        {
+          review_id: reviewId,
+          reason: reportReasons[reviewId] || 'Spam',
+        },
+      ])
 
-  if (error) {
-    console.error(error)
-    alert('Failed to report review.')
-  } else {
-    alert('Review reported.')
-  }
+if (error) {
+  console.error(error)
+  alert('Failed to report review.')
+} else {
+  setReportReasons({
+    ...reportReasons,
+   [reviewId]: 'Spam',
+  })
+
+  alert('Review reported.')
+
 }
+  }
 
   const sortedReviews = [...reviews].sort((a, b) => {
     if (sortBy === 'highest') {
@@ -82,50 +91,57 @@ export default function ReviewList({
 
       <div className="space-y-4">
         {sortedReviews.map((review) => (
-         <div
-  key={review.id}
-  className="bg-slate-50 rounded-xl p-4"
->
-  <div className="flex justify-between items-center">
-    <div className="text-yellow-500 text-lg">
-      {'★'.repeat(review.overall_rating)}
-    </div>
+          <div
+            key={review.id}
+            className="bg-slate-50 rounded-xl p-4"
+          >
+            <div className="flex justify-between items-center">
+              <div className="text-yellow-500 text-lg">
+                {'★'.repeat(review.overall_rating)}
+              </div>
 
-    <div className="text-sm text-slate-500">
-      {new Date(review.created_at).toLocaleDateString(
-  'en-CA',
-  {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }
-)}
-    </div>
-  </div>
+              <div className="text-sm text-slate-500">
+                {new Date(
+                  review.created_at
+                ).toLocaleDateString('en-CA', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </div>
+            </div>
 
-  <p className="mt-2 text-slate-700">
-    {review.review_text}
-  </p>
+            <p className="mt-2 text-slate-700">
+              {review.review_text}
+            </p>
 
-  <select
-  value={reportReason}
-  onChange={(e) => setReportReason(e.target.value)}
-  className="mt-3 mr-3 border rounded-lg px-2 py-1 text-sm"
->
-  <option>Spam</option>
-  <option>Fake Review</option>
-  <option>Harassment</option>
-  <option>Duplicate</option>
-  <option>Other</option>
-</select>
+            <select
+              value={
+                reportReasons[review.id] || 'Spam'
+              }
+              onChange={(e) =>
+                setReportReasons({
+                  ...reportReasons,
+                  [review.id]: e.target.value,
+                })
+              }
+              className="mt-3 mr-3 border rounded-lg px-2 py-1 text-sm"
+            >
+              <option>Spam</option>
+              <option>Fake Review</option>
+              <option>Harassment</option>
+              <option>Duplicate</option>
+              <option>Other</option>
+            </select>
 
-    <button
-    onClick={() => reportReview(review.id)}
-    className="mt-3 text-sm text-red-600 hover:underline"
-    >
-      Report Review
-    </button>
-
+            <button
+              onClick={() =>
+                reportReview(review.id)
+              }
+              className="mt-3 text-sm text-red-600 hover:underline"
+            >
+              Report Review
+            </button>
           </div>
         ))}
       </div>
