@@ -118,23 +118,38 @@ console.log('REPORT ERROR:', error)
   }
 }
 
-async function rejectReview(reviewId: number) {
+async function rejectReview(
+  reviewId: number,
+  reportId: number
+) {
   console.log('Rejecting review:', reviewId)
 
-  const { error: reportDeleteError } = await supabase
+const { error: reportResolveError } =
+  await supabase
     .from('reports')
-    .delete()
-    .eq('review_id', reviewId)
+    .update({
+      status: 'resolved',
+      moderator_notes:
+        moderationNotes[reviewId] || null,
+      resolved_at:
+        new Date().toISOString(),
+    })
+    .eq('id', reportId)
 
-  if (reportDeleteError) {
-    console.error('Report delete error:', reportDeleteError)
-    return
-  }
+if (reportResolveError) {
+  console.error(
+    'Report update error:',
+    reportResolveError
+  )
+  return
+}
 
-  const { error } = await supabase
-    .from('reviews')
-    .delete()
-    .eq('id', reviewId)
+const { error } = await supabase
+  .from('reviews')
+  .update({
+    status: 'removed',
+  })
+  .eq('id', reviewId)
 
   console.log('Delete error:', error)
 
@@ -147,7 +162,25 @@ async function rejectReview(reviewId: number) {
   }
 }
 
-async function resolveReport(reportId: number) {
+async function resolveReport(
+  reportId: number,
+  reviewId: number
+) {
+
+const { error: reviewError } = await supabase
+  .from('reviews')
+  .update({
+    moderation_notes:
+      moderationNotes[reviewId] || null,
+    moderated_at: new Date().toISOString(),
+  })
+  .eq('id', reviewId)
+
+if (reviewError) {
+  console.error(reviewError)
+  return
+}
+
   const { error } = await supabase
     .from('reports')
     .update({
@@ -252,13 +285,14 @@ return (
                 </button>
 
                 <button
-                  onClick={() =>
-                    rejectReview(review.id)
-                  }
-                  className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700"
-                >
-                  Reject
-                </button>
+                    onClick={() =>
+                      rejectReview(review.id, 0)
+                    }
+                    className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700"
+                  >
+                    Reject
+                  </button>
+
               </div>
             </div>
           ))
@@ -334,7 +368,12 @@ return (
 />
 
   <button
-    onClick={() => resolveReport(report.id)}
+    onClick={() =>
+  resolveReport(
+    report.id,
+    report.review_id
+  )
+}
     className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700"
   >
     Resolve
@@ -347,7 +386,11 @@ return (
     )
 
     if (confirmed) {
-      rejectReview(report.review_id)
+      rejectReview(
+  report.review_id,
+  report.id
+)
+
     }
   }}
   className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700"
