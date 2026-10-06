@@ -48,7 +48,20 @@ useEffect(() => {
 
 useEffect(() => {
   loadLandlords()
-  checkUser()
+
+  supabase.auth.getUser().then(({ data }) => {
+    setUserEmail(data.user?.email ?? null)
+  })
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange(
+    (_event, session) => {
+      setUserEmail(session?.user?.email ?? null)
+    }
+  )
+
+  return () => subscription.unsubscribe()
 }, [])
 
 async function loadLandlords() {
@@ -99,16 +112,22 @@ setLandlords(landlordsWithRatings)
 async function checkUser() {
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser()
+
+  console.log('USER', user)
+  console.log('ERROR', error)
 
   setUserEmail(user?.email || null)
 }
 
 async function signUp() {
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
   })
+
+  console.log('SIGNUP DATA', data)
 
   if (error) {
     setAuthMessage(error.message)
@@ -116,10 +135,34 @@ async function signUp() {
     setAuthMessage(
       'Account created. Check your email if confirmation is required.'
     )
+  }
+}
 
+async function signIn() {
+  const { error } =
+    await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+  if (error) {
+    setAuthMessage(error.message)
+  } else {
+    setAuthMessage('Successfully signed in.')
     checkUser()
   }
 }
+
+async function signOut() {
+  const { error } = await supabase.auth.signOut()
+
+  if (error) {
+    setAuthMessage(error.message)
+  } else {
+    setAuthMessage('Successfully signed out.')
+  }
+}
+
   const filteredLandlords = landlords.filter((landlord) => {
   const nameMatch =
     landlord.name.toLowerCase().includes(search.toLowerCase())
@@ -145,44 +188,70 @@ async function signUp() {
           Helping Nova Scotia renters make informed housing decisions.
         </p>
 
-        <p className="text-sm text-slate-500 mb-4">
-          Current User: {userEmail || 'Not signed in'}
-        </p>
+{!userEmail ? (
+  <div className="bg-white rounded-xl shadow p-4 mb-6">
+    <h2 className="font-bold mb-3">
+      Create Account
+    </h2>
 
-        <div className="bg-white rounded-xl shadow p-4 mb-6">
-  <h2 className="font-bold mb-3">
-    Create Account
-  </h2>
+    <input
+      type="email"
+      placeholder="Email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      className="w-full p-3 border rounded-xl mb-3"
+    />
 
-  <input
-    type="email"
-    placeholder="Email"
-    value={email}
-    onChange={(e) => setEmail(e.target.value)}
-    className="w-full p-3 border rounded-xl mb-3"
-  />
+    <input
+      type="password"
+      placeholder="Password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      className="w-full p-3 border rounded-xl mb-3"
+    />
 
-  <input
-    type="password"
-    placeholder="Password"
-    value={password}
-    onChange={(e) => setPassword(e.target.value)}
-    className="w-full p-3 border rounded-xl mb-3"
-  />
+    <div className="flex gap-3">
+      <button
+        onClick={signUp}
+        className="bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700"
+      >
+        Create Account
+      </button>
 
-  <button
-    onClick={signUp}
-    className="bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700"
-  >
-    Create Account
-  </button>
+      <button
+        onClick={signIn}
+        className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700"
+      >
+        Sign In
+      </button>
+    </div>
 
-  {authMessage && (
-    <p className="mt-3 text-sm text-slate-600">
-      {authMessage}
+    {authMessage && (
+      <p className="mt-3 text-sm text-slate-600">
+        {authMessage}
+      </p>
+    )}
+  </div>
+) : (
+  <div className="bg-white rounded-xl shadow p-4 mb-6">
+    <p className="mb-3 text-green-700 font-medium">
+      Signed in as {userEmail}
     </p>
-  )}
-</div>
+
+    <button
+      onClick={signOut}
+      className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700"
+    >
+      Sign Out
+    </button>
+
+    {authMessage && (
+      <p className="mt-3 text-sm text-slate-600">
+        {authMessage}
+      </p>
+    )}
+  </div>
+)}    
 
         <input
 type="text"
