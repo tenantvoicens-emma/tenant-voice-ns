@@ -6,6 +6,9 @@ import { supabase } from '../../lib/supabase'
 export default function AdminPage() {
   const [reviews, setReviews] = useState<any[]>([])
   const [reports, setReports] = useState<any[]>([])
+  const [moderationNotes, setModerationNotes] = useState<
+  Record<number, string>
+>({})
 
   const [stats, setStats] = useState({
   pendingReviews: 0,
@@ -75,18 +78,18 @@ export default function AdminPage() {
   .from('reports')
   .select(`
     *,
-    reviews (
-      review_text,
-      overall_rating,
-      landlords (
-        name
-      )
-    )
+reviews (
+  review_text,
+  overall_rating,
+  landlords (
+    name
+  )
+)
   `)
   .eq('status', 'pending')
 
-    if (error) {
-      console.error(error)
+   if (error) {
+console.log('REPORT ERROR:', error)
     } else {
       setReports(data || [])
     }
@@ -110,12 +113,23 @@ export default function AdminPage() {
     console.error(error)
   } else {
     loadReviews()
+    loadReports()
     loadStats()
   }
 }
 
 async function rejectReview(reviewId: number) {
   console.log('Rejecting review:', reviewId)
+
+  const { error: reportDeleteError } = await supabase
+    .from('reports')
+    .delete()
+    .eq('review_id', reviewId)
+
+  if (reportDeleteError) {
+    console.error('Report delete error:', reportDeleteError)
+    return
+  }
 
   const { error } = await supabase
     .from('reviews')
@@ -128,6 +142,7 @@ async function rejectReview(reviewId: number) {
     console.error(error)
   } else {
     loadReviews()
+    loadReports()
     loadStats()
   }
 }
@@ -259,7 +274,10 @@ return (
               No pending reports.
             </p>
           ) : (
-            reports.map((report) => (
+            reports.map((report) => {
+  console.log('REPORT DATA:', report)
+
+  return (
               <div
                 key={report.id}
                 className="bg-white rounded-xl shadow p-4 mb-4"
@@ -282,21 +300,69 @@ return (
                 </p>
 
                 <p>
+                  <strong>Reported:</strong>{' '}
+                  {new Date(report.created_at).toLocaleDateString(
+                    'en-CA',
+                    {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    }
+                  )}
+                </p>
+
+                <p>
                   <strong>Status:</strong>{' '}
                   {report.status}
                 </p>
 
             <div className="mt-3">
+<div className="mt-3 flex gap-3">
+
+<textarea
+  value={
+    moderationNotes[report.review_id] || ''
+  }
+  onChange={(e) =>
+    setModerationNotes({
+      ...moderationNotes,
+      [report.review_id]: e.target.value,
+    })
+  }
+  placeholder="Moderator notes..."
+  className="w-full border rounded-lg p-2 mt-3"
+/>
+
   <button
     onClick={() => resolveReport(report.id)}
     className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700"
   >
     Resolve
   </button>
+
+<button
+  onClick={() => {
+    const confirmed = window.confirm(
+      'Are you sure you want to permanently delete this review?'
+    )
+
+    if (confirmed) {
+      rejectReview(report.review_id)
+    }
+  }}
+  className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700"
+>
+  Delete Review
+</button>
+
+</div>
+
 </div>
 
               </div>
-            ))
+            )
+})
+
           )}
         </div>
       </div>

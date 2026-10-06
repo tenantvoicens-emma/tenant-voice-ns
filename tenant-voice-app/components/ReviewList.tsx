@@ -16,7 +16,27 @@ export default function ReviewList({
     Record<number, string>
   >({})
 
+  const [reportMessages, setReportMessages] = useState<
+     Record<number, string>
+   >({})
+
   async function reportReview(reviewId: number) {
+    
+    const { data: existingReport } = await supabase
+  .from('reports')
+  .select('id')
+  .eq('review_id', reviewId)
+  .eq('status', 'pending')
+  .maybeSingle()
+
+  if (existingReport) {
+  setReportMessages({
+  ...reportMessages,
+  [reviewId]: 'This review has already been reported.',
+})
+  return
+}
+    
     const { error } = await supabase
       .from('reports')
       .insert([
@@ -28,14 +48,20 @@ export default function ReviewList({
 
 if (error) {
   console.error(error)
-  alert('Failed to report review.')
+  setReportMessages({
+  ...reportMessages,
+  [reviewId]:'Failed to report review.',
+})
 } else {
   setReportReasons({
     ...reportReasons,
    [reviewId]: 'Spam',
   })
 
-  alert('Review reported.')
+  setReportMessages({
+  ...reportMessages,
+  [reviewId]: '✅ Review reported successfully.',
+})
 
 }
   }
@@ -142,6 +168,13 @@ if (error) {
             >
               Report Review
             </button>
+
+            {reportMessages[review.id] && (
+              <p className="mt-2 text-sm text-green-600">
+                {reportMessages[review.id]}
+              </p>
+            )}
+
           </div>
         ))}
       </div>
