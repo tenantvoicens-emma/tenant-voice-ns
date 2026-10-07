@@ -1,13 +1,27 @@
+// ===================================
+// IMPORTS
+// ===================================
+
+
 import { supabase } from '../../../lib/supabase'
 import ReviewForm from '../../../components/ReviewForm'
 import ReviewList from '../../../components/ReviewList'
 
-export default async function LandlordPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
-  const { id } = await params
+
+// ===================================
+// LANDLORD DETAIL PAGE
+// ===================================
+
+      export default async function LandlordPage({
+        params,
+      }: {
+        params: Promise<{ id: string }>
+      }) {
+        const { id } = await params
+
+// ===================================
+// LOAD LANDLORD DATA
+// ===================================
 
   const { data: landlord } = await supabase
     .from('landlords')
@@ -18,11 +32,19 @@ export default async function LandlordPage({
     .eq('id', Number(id))
     .single()
 
+// ===================================
+// LOAD REVIEWS
+// ===================================
+
   const { data: reviews } = await supabase
     .from('reviews')
     .select('*')
     .eq('landlord_id', Number(id))
     .eq('status', 'approved')
+
+// ===================================
+// CALCULATE RATING
+// ===================================
 
   const averageRating =
     reviews && reviews.length > 0
@@ -34,6 +56,10 @@ export default async function LandlordPage({
         ).toFixed(1)
       : null
 
+// ===================================
+  // NOT FOUND HANDLER
+// ===================================
+
   if (!landlord) {
     return (
       <div>
@@ -44,10 +70,17 @@ export default async function LandlordPage({
     )
   }
 
+// ===================================
+ // PAGE LAYOUT
+// ===================================
+
   return (
     <main className="min-h-screen bg-slate-50 p-6">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-2xl shadow-lg p-8">
+
+{/* LANDLORD HEADER */}
+
           <h1 className="text-4xl font-bold">
             {landlord.name}
           </h1>
@@ -68,10 +101,13 @@ export default async function LandlordPage({
             </span>
           </div>
 
+{/* SUBMIT REVIEW */}
           <ReviewForm
              landlordId={landlord.id}
              properties={landlord.properties || []}
           />
+
+{/* PROPERTY LIST */}
 
           <div className="mt-8 border-t pt-6">
             <div className="bg-white rounded-xl p-6 shadow mb-6">
@@ -100,6 +136,8 @@ export default async function LandlordPage({
                 </p>
               )}
             </div>
+
+{/* RECENT REVIEWS */}
 
             <h2 className="text-2xl font-bold mb-4">
               Reviews ({reviews?.length || 0})

@@ -10,6 +10,11 @@ type Props = {
 export default function ReviewList({
   reviews,
 }: Props) {
+
+// ===================================
+// COMPONENT STATE
+// ===================================
+
   const [sortBy, setSortBy] = useState('newest')
 
   const [reportReasons, setReportReasons] = useState<
@@ -19,6 +24,10 @@ export default function ReviewList({
   const [reportMessages, setReportMessages] = useState<
      Record<number, string>
    >({})
+
+// ===================================
+// REPORT REVIEW FUNCTION
+// ===================================
 
   async function reportReview(reviewId: number) {
     
@@ -66,6 +75,10 @@ if (error) {
 }
   }
 
+// ===================================
+// REVIEW SORTING
+// ===================================
+
   const sortedReviews = [...reviews].sort((a, b) => {
     if (sortBy === 'highest') {
       return b.overall_rating - a.overall_rating
@@ -81,6 +94,10 @@ if (error) {
     )
   })
 
+// ===================================
+// EMPTY STATE
+// ===================================
+
   if (reviews.length === 0) {
     return (
       <p className="text-slate-600">
@@ -90,7 +107,12 @@ if (error) {
   }
 
   return (
-    <div className="mt-4">
+   
+/* ===================================
+SORT CONTROLS
+=================================== */
+
+   <div className="mt-4">
       <div className="mb-4">
         <label className="mr-2 font-medium">
           Sort Reviews:
@@ -114,6 +136,10 @@ if (error) {
           </option>
         </select>
       </div>
+
+{/* ===================================
+REVIEW CARDS
+=================================== */}
 
       <div className="space-y-4">
         {sortedReviews.map((review) => (
@@ -140,6 +166,10 @@ if (error) {
             <p className="mt-2 text-slate-700">
               {review.review_text}
             </p>
+
+{/* ===================================
+REPORT CONTROLS
+=================================== */}
 
             <select
               value={
@@ -168,6 +198,10 @@ if (error) {
             >
               Report Review
             </button>
+
+/* ===================================
+REPORT STATUS MESSAGES
+=================================== */
 
             {reportMessages[review.id] && (
               <p className="mt-2 text-sm text-green-600">

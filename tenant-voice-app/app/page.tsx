@@ -284,6 +284,8 @@ async function signOut() {
   </div>
 </div>
 
+<div className="my-16 border-t border-slate-200"></div>
+
 {/* ==================================
     SEARCH BAR
 ================================== */}
@@ -355,8 +357,9 @@ async function signOut() {
     LANDLORD CARDS
 ================================== */}
 
-        {filteredLandlords.map((landlord) => (
-          <div
+{filteredLandlords.map((landlord) => (
+  <div
+    key={landlord.id}
           className="
                 bg-white
                 rounded-3xl
@@ -400,7 +403,7 @@ async function signOut() {
             </>
           ) : (
             <div className="text-sm text-slate-400">
-              No Reviews Yet
+              Be the first to review
             </div>
           )}
         </div>
@@ -455,7 +458,7 @@ async function signOut() {
     FOOTER
 =================================== */}
 
-<footer className="mt-20 border-t border-slate-200 py-10 text-center">
+<footer className="mt-32 border-t border-slate-200 py-10 text-center">
   <h3 className="font-semibold text-slate-700">
     Tenant Voice NS
   </h3>
