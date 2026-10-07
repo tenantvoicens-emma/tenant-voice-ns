@@ -177,89 +177,152 @@ async function signOut() {
   return nameMatch || addressMatch
 })
 
+// ===================================
+// PAGE LAYOUT
+// ===================================
+
   return (
     <main className="min-h-screen bg-slate-50 p-6">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-5xl font-bold text-slate-800 mb-2">
-          Tenant Voice NS
-        </h1>
+  <div className="max-w-5xl mx-auto">
 
-        <p className="text-slate-500 mb-8">
-          Helping Nova Scotia renters make informed housing decisions.
-        </p>
+{/* ===================================
+    NAVIGATION
+=================================== */}
 
-{!userEmail ? (
-  <div className="bg-white rounded-xl shadow p-4 mb-6">
-    <h2 className="font-bold mb-3">
-      Create Account
-    </h2>
+<div className="flex justify-between items-center py-6 mb-8">
+  <h2 className="text-2xl font-bold">
+    Tenant Voice NS
+  </h2>
 
-    <input
-      type="email"
-      placeholder="Email"
-      value={email}
-      onChange={(e) => setEmail(e.target.value)}
-      className="w-full p-3 border rounded-xl mb-3"
-    />
-
-    <input
-      type="password"
-      placeholder="Password"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      className="w-full p-3 border rounded-xl mb-3"
-    />
-
-    <div className="flex gap-3">
-      <button
-        onClick={signUp}
-        className="bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700"
-      >
-        Create Account
-      </button>
-
-      <button
-        onClick={signIn}
-        className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700"
-      >
-        Sign In
-      </button>
-    </div>
-
-    {authMessage && (
-      <p className="mt-3 text-sm text-slate-600">
-        {authMessage}
-      </p>
-    )}
+  <div className="flex gap-6">
+    <span>About</span>
+    <span>Resources</span>
+    <span>Sign In</span>
   </div>
-) : (
-  <div className="bg-white rounded-xl shadow p-4 mb-6">
-    <p className="mb-3 text-green-700 font-medium">
-      Signed in as {userEmail}
-    </p>
+</div>
 
-    <button
-      onClick={signOut}
-      className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700"
-    >
-      Sign Out
+{/* ===================================
+    USER STATUS
+=================================== */}
+
+{userEmail && (
+  <div className="text-right mb-6 text-sm text-slate-500">
+    Signed in as {userEmail}
+  </div>
+)}
+
+{/* ===================================
+    HERO SECTION
+=================================== */}
+
+    <div className="text-center py-16">
+      <h1 className="text-6xl font-bold text-slate-900 mb-6">
+        Know Before You Rent
+      </h1>
+
+  <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-8">
+    Search Nova Scotia landlords, read tenant experiences,
+    and make informed housing decisions before signing a lease.
+  </p>
+
+  <div className="flex justify-center gap-4">
+    <button className="bg-blue-600 text-white px-6 py-3 rounded-2xl hover:bg-blue-700 transition">
+      Search Landlords
     </button>
 
-    {authMessage && (
-      <p className="mt-3 text-sm text-slate-600">
-        {authMessage}
-      </p>
-    )}
+    <button className="bg-white border border-slate-300 px-6 py-3 rounded-2xl hover:bg-slate-100 transition">
+      Share Your Experience
+    </button>
   </div>
-)}    
+</div>
 
-        <input
-type="text"
-placeholder="Search landlords or addresses..."
-value={search}
-onChange={(e) => setSearch(e.target.value)}
-className="w-full p-3 border rounded-xl mb-8"
-/>
+{/* ===================================
+    STATISTICS CARDS
+=================================== */}
+
+<div className="grid md:grid-cols-3 gap-6 mb-12">
+  <div className="bg-white rounded-3xl p-6 text-center shadow-sm">
+    <div className="text-3xl font-bold text-blue-600">
+      {landlords.length}
+    </div>
+
+    <div className="text-slate-500">
+      Landlords
+    </div>
+  </div>
+
+  <div className="bg-white rounded-3xl p-6 text-center shadow-sm">
+    <div className="text-3xl font-bold text-green-600">
+      {
+        landlords.reduce(
+          (sum, landlord) =>
+            sum + (landlord.properties?.length || 0),
+          0
+        )
+      }
+    </div>
+
+    <div className="text-slate-500">
+      Properties
+    </div>
+  </div>
+
+  <div className="bg-white rounded-3xl p-6 text-center shadow-sm">
+    <div className="text-3xl font-bold text-purple-600">
+      {
+        landlords.reduce(
+          (sum, landlord) =>
+            sum + landlord.reviewCount,
+          0
+        )
+      }
+    </div>
+
+    <div className="text-slate-500">
+      Reviews
+    </div>
+  </div>
+</div>
+
+{/* ==================================
+    SEARCH BAR
+================================== */}
+
+{/* SEARCH */}
+
+<div className="mb-12">
+  <h2 className="text-3xl font-bold text-slate-900 mb-2">
+    Search Landlords
+  </h2>
+
+  <p className="text-slate-500 mb-6">
+    Search by landlord name or property address.
+  </p>
+
+  <input
+    type="text"
+    placeholder="Search landlord name or property address..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="
+      w-full
+      p-5
+      rounded-3xl
+      border
+      border-slate-200
+      shadow-lg
+      text-lg
+      focus:outline-none
+      focus:ring-4
+      focus:ring-blue-200
+      bg-white
+    "
+  />
+</div>
+
+{/* ==================================
+    SEARCH SUGGESTIONS
+================================== */}
 
 {suggestions.length > 0 && (
   <div className="bg-white border rounded-xl shadow mb-6">
@@ -278,20 +341,42 @@ className="w-full p-3 border rounded-xl mb-8"
   </div>
 )}
 
+{/* ==================================
+    ERROR MESSAGES
+================================== */}
+
         {error && (
           <div className="bg-red-100 p-4 rounded mb-4">
             Error: {error}
           </div>
         )}
 
+{/* ==================================
+    LANDLORD CARDS
+================================== */}
+
         {filteredLandlords.map((landlord) => (
           <div
-            key={landlord.id}
-            className="bg-white rounded-2xl shadow-lg p-6 mb-5 border border-slate-100 hover:shadow-xl transition"
+          className="
+                bg-white
+                rounded-3xl
+                p-8
+                mb-6
+                border
+                border-slate-200
+                shadow-sm
+                hover:shadow-xl
+                hover:-translate-y-1
+                transition-all
+                duration-300
+              "
           >
+
+{/* LANDLORD HEADER */}
+
             <div className="flex justify-between items-start">
               <div>
-                <h2 className="text-2xl font-bold text-slate-800">
+                <h2 className="text-3xl font-bold text-slate-900">
                   {landlord.name}
                 </h2>
 
@@ -301,23 +386,27 @@ className="w-full p-3 border rounded-xl mb-8"
               </div>
 
               <div className="text-right">
-  {landlord.averageRating ? (
-    <>
-      <div className="text-yellow-500 text-xl">
-        ★ {landlord.averageRating}
-      </div>
 
-      <div className="text-sm text-slate-500">
-        {landlord.reviewCount} Reviews
-      </div>
-    </>
-  ) : (
-    <div className="text-sm text-slate-400">
-      No Reviews Yet
-    </div>
-  )}
-</div>
+
+          {landlord.averageRating ? (
+            <>
+              <div className="text-yellow-500 text-xl">
+                ★ {landlord.averageRating}
+              </div>
+
+              <div className="text-sm text-slate-500">
+                {landlord.reviewCount} Reviews
+              </div>
+            </>
+          ) : (
+            <div className="text-sm text-slate-400">
+              No Reviews Yet
             </div>
+          )}
+        </div>
+            </div>
+
+{/* LOCATION TAGS */}
 
             <div className="mt-4 flex gap-2 flex-wrap">
               <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
@@ -329,35 +418,57 @@ className="w-full p-3 border rounded-xl mb-8"
               </span>
             </div>
 
+{/* LANDLORD DETAILS */}
+
             <div className="mt-4 border-t pt-4 text-sm text-slate-600">
 <p>Reviews: Coming Soon</p>
 
-
-<p className="font-medium mb-2">
-  Properties:
+<p className="text-slate-600">
+  {landlord.properties?.length || 0} properties recorded
 </p>
-
-{landlord.properties?.slice(0, 3).map((property: any) => (
-  <p
-    key={property.id}
-    className="text-sm text-slate-500"
-  >
-    {property.address}
-  </p>
-))}
 
 </div>
 
-
+{/* VIEW REVIEWS BUTTON */}
  
-<Link
-href={`/landlord/${landlord.id}`}
-className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700"
->
-  Read Reviews
-</Link>
-          </div>
+            <Link
+            href={`/landlord/${landlord.id}`}
+            className="
+              mt-6
+              inline-block
+              bg-blue-600
+              text-white
+              px-6
+              py-3
+              rounded-2xl
+              font-medium
+              hover:bg-blue-700
+              transition
+            "
+            >
+              Read Reviews
+            </Link>
+                      </div>
         ))}
+
+{/* ===================================
+    FOOTER
+=================================== */}
+
+<footer className="mt-20 border-t border-slate-200 py-10 text-center">
+  <h3 className="font-semibold text-slate-700">
+    Tenant Voice NS
+  </h3>
+
+  <p className="text-slate-500 mt-2">
+    Helping Nova Scotia renters make informed housing decisions.
+  </p>
+
+  <p className="text-sm text-slate-400 mt-4">
+    © 2026 Tenant Voice NS
+  </p>
+</footer>
+
       </div>
     </main>
   )
