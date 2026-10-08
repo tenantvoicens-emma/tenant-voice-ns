@@ -223,16 +223,16 @@ async function signOut() {
       >
         Sign Out
       </button>
-    ) : (
-      <button
-        className="text-blue-600 hover:text-blue-700"
-      >
-        Sign In
-      </button>
-    )}
 
+) : (
+  <Link
+    href="/signin"
+    className="text-blue-600 hover:text-blue-700"
+     >
+     Sign In
+   </Link>
+      )}
   </div>
-
 </div>
 
 {/* ===================================
