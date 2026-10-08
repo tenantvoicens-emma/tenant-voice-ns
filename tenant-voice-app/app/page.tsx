@@ -190,26 +190,50 @@ async function signOut() {
 =================================== */}
 
 <div className="flex justify-between items-center py-6 mb-8">
+
   <h2 className="text-2xl font-bold">
     Tenant Voice NS
   </h2>
 
-  <div className="flex gap-6">
+  <div className="flex gap-6 items-center">
+
     <span>About</span>
+
     <span>Resources</span>
-    <span>Sign In</span>
+
+    {userEmail && (
+      <div
+        className="
+          bg-slate-100
+          px-3
+          py-1
+          rounded-full
+          text-sm
+          text-slate-600
+        "
+      >
+        👤 {userEmail}
+      </div>
+    )}
+
+    {userEmail ? (
+      <button
+        onClick={signOut}
+        className="text-red-600 hover:text-red-700"
+      >
+        Sign Out
+      </button>
+    ) : (
+      <button
+        className="text-blue-600 hover:text-blue-700"
+      >
+        Sign In
+      </button>
+    )}
+
   </div>
+
 </div>
-
-{/* ===================================
-    USER STATUS
-=================================== */}
-
-{userEmail && (
-  <div className="text-right mb-6 text-sm text-slate-500">
-    Signed in as {userEmail}
-  </div>
-)}
 
 {/* ===================================
     HERO SECTION
