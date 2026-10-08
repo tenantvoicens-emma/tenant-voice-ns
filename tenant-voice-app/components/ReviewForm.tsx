@@ -13,7 +13,8 @@ export default function ReviewForm({
   properties,
 }: Props) {
 
-  const [rating, setRating] = useState(5)
+  const [rating, setRating] = useState(1)
+  const [hoverRating, setHoverRating] = useState(0)
   const [reviewText, setReviewText] = useState('')
   const [message, setMessage] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -108,30 +109,30 @@ async function submitReview() {
 <div className="flex gap-1 mb-4">
 
   {[1, 2, 3, 4, 5].map((star) => (
-    <button
-      key={star}
-      type="button"
-      onClick={() => setRating(star)}
-      className={`
-  text-3xl
-  transition
-  hover:scale-110
-  ${
-    star <= rating
-      ? 'text-yellow-500'
-      : 'text-slate-300'
-  }
-`}
-
-    >
-      {star <= rating ? '★' : '☆'}
-    </button>
+  <button
+  key={star}
+  type="button"
+  onClick={() => setRating(star)}
+  onMouseEnter={() => setHoverRating(star)}
+  onMouseLeave={() => setHoverRating(0)}
+  className={`
+    text-4xl
+    transition
+    ${
+      star <= (hoverRating || rating)
+        ? 'text-yellow-500'
+        : 'text-slate-300'
+    }
+  `}
+>
+  ★
+</button>
   ))}
 
 </div>
 
 <p className="text-sm text-slate-500 mb-4">
-  {rating} out of 5 stars
+  {hoverRating || rating} out of 5 stars
 </p>
 
 <label className="block text-sm font-medium mb-2">
@@ -166,7 +167,7 @@ async function submitReview() {
               py-3
               rounded-xl
               font-medium
-              transition
+              transition duration-150
               disabled:bg-slate-400
             "
         >
