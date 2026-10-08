@@ -358,22 +358,23 @@ async function signOut() {
 ================================== */}
 
 {filteredLandlords.map((landlord) => (
-  <div
+  <Link
     key={landlord.id}
-          className="
-                bg-white
-                rounded-3xl
-                p-8
-                mb-6
-                border
-                border-slate-200
-                shadow-sm
-                hover:shadow-xl
-                hover:-translate-y-1
-                transition-all
-                duration-300
-              "
-          >
+    href={`/landlord/${landlord.id}`}
+    className="
+      block
+      bg-white
+      rounded-3xl
+      p-8
+      mb-6
+      border
+      border-slate-200
+      hover:border-blue-300
+      shadow-sm
+      hover:shadow-xl
+      hover:-translate-y-1
+    "
+  >
 
 {/* LANDLORD HEADER */}
 
@@ -430,28 +431,13 @@ async function signOut() {
   {landlord.properties?.length || 0} properties recorded
 </p>
 
+<p className="mt-3 text-blue-600 font-medium">
+  View Landlord →
+</p>
+
 </div>
 
-{/* VIEW REVIEWS BUTTON */}
- 
-            <Link
-            href={`/landlord/${landlord.id}`}
-            className="
-              mt-6
-              inline-block
-              bg-blue-600
-              text-white
-              px-6
-              py-3
-              rounded-2xl
-              font-medium
-              hover:bg-blue-700
-              transition
-            "
-            >
-              Read Reviews
-            </Link>
-                      </div>
+                      </Link>
         ))}
 
 {/* ===================================
