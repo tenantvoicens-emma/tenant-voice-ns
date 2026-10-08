@@ -98,13 +98,23 @@ if (error) {
 // EMPTY STATE
 // ===================================
 
-  if (reviews.length === 0) {
-    return (
-      <p className="text-slate-600">
-        No approved reviews yet.
+if (reviews.length === 0) {
+  return (
+    <div className="bg-slate-50 border rounded-2xl p-6 text-center">
+      <p className="text-2xl mb-2">
+        ⭐
       </p>
-    )
-  }
+
+      <h3 className="font-semibold text-lg">
+        No Reviews Yet
+      </h3>
+
+      <p className="text-slate-500 mt-2">
+        Be the first tenant to share their experience.
+      </p>
+    </div>
+  )
+}
 
   return (
    
@@ -206,6 +216,31 @@ REVIEW CARDS
               Anonymous Reviewer
             </span>
           </div>
+
+<div className="mt-3 flex items-center gap-2">
+
+  <div
+    className="
+      w-8
+      h-8
+      rounded-full
+      bg-slate-200
+      flex
+      items-center
+      justify-center
+      text-sm
+    "
+  >
+    👤
+  </div>
+
+  <div>
+    <p className="text-sm font-medium">
+      Anonymous Reviewer
+    </p>
+  </div>
+
+</div>
 
           <p className="mt-3 text-slate-700">
             {review.review_text}

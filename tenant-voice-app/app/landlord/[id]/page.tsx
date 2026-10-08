@@ -135,7 +135,7 @@ import ReviewList from '../../../components/ReviewList'
 
           <div className="bg-slate-50 rounded-2xl p-4 border">
             <p className="text-sm text-slate-500">
-              Average Rating
+              ⭐ Average Rating
             </p>
 
             <p className="text-3xl font-bold text-yellow-600">
@@ -145,7 +145,7 @@ import ReviewList from '../../../components/ReviewList'
 
           <div className="bg-slate-50 rounded-2xl p-4 border">
             <p className="text-sm text-slate-500">
-              Reviews
+              💬 Reviews
             </p>
 
             <p className="text-3xl font-bold">
@@ -155,7 +155,7 @@ import ReviewList from '../../../components/ReviewList'
 
           <div className="bg-slate-50 rounded-2xl p-4 border">
             <p className="text-sm text-slate-500">
-              Properties
+              🏢 Properties
             </p>
 
             <p className="text-3xl font-bold">
@@ -165,14 +165,16 @@ import ReviewList from '../../../components/ReviewList'
 
         </div>
        
-          <ReviewForm
-             landlordId={landlord.id}
-             properties={landlord.properties || []}
-          />
+          <div className="mt-8">
+  <ReviewForm
+    landlordId={landlord.id}
+    properties={landlord.properties || []}
+  />
+</div>
 
 {/* PROPERTY LIST */}
 
-          <div className="mt-8 border-t pt-6">
+          <div className="mt-10">
             <div className="bg-white rounded-xl p-6 shadow mb-6">
               <h2 className="text-xl font-bold mb-4">
                 Properties Managed ({landlord.properties?.length || 0})
@@ -181,10 +183,19 @@ import ReviewList from '../../../components/ReviewList'
               {landlord.properties?.length > 0 ? (
                 landlord.properties.map((property: any) => (
                   <div
-                    key={property.id}
-                    className="border-b py-2 last:border-b-0"
-                  >
-                    <p className="font-medium">
+              key={property.id}
+              className="
+                border
+                rounded-xl
+                p-4
+                mb-3
+                bg-slate-50
+                hover:bg-slate-100
+                transition
+              "
+            >
+
+                    <p className="font-semibold text-slate-800">
                       {property.address}
                     </p>
 
@@ -193,11 +204,23 @@ import ReviewList from '../../../components/ReviewList'
                     </p>
                   </div>
                 ))
-              ) : (
-                <p className="text-slate-500">
-                  No properties listed yet.
-                </p>
-              )}
+             ) : (
+  <div className="bg-slate-50 border rounded-2xl p-6 text-center">
+
+    <p className="text-2xl mb-2">
+      🏢
+    </p>
+
+    <h3 className="font-semibold text-lg">
+      No Properties Listed
+    </h3>
+
+    <p className="text-slate-500 mt-2">
+      No properties have been added for this landlord yet.
+    </p>
+
+  </div>
+)}
             </div>
 
 {/* RECENT REVIEWS */}
