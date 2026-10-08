@@ -2,10 +2,11 @@
 // IMPORTS
 // ===================================
 
-
+import Link from 'next/link'
 import { supabase } from '../../../lib/supabase'
 import ReviewForm from '../../../components/ReviewForm'
 import ReviewList from '../../../components/ReviewList'
+
 
 
 // ===================================
@@ -182,27 +183,31 @@ import ReviewList from '../../../components/ReviewList'
 
               {landlord.properties?.length > 0 ? (
                 landlord.properties.map((property: any) => (
-                  <div
-              key={property.id}
-              className="
-                border
-                rounded-xl
-                p-4
-                mb-3
-                bg-slate-50
-                hover:bg-slate-100
-                transition
-              "
-            >
+                 <Link
+                      key={property.id}
+                      href={`/property/${property.id}`}
+                      className="
+                        block
+                        border
+                        rounded-xl
+                        p-4
+                        mb-3
+                        bg-slate-50
+                        hover:bg-slate-100
+                        hover:shadow-md
+                        transition
+                        cursor-pointer
+                      "
+                    >
 
                     <p className="font-semibold text-slate-800">
                       {property.address}
                     </p>
 
                     <p className="text-sm text-slate-500">
-                      {property.city}, {property.province}
+                      📍 {property.city}, {property.province}
                     </p>
-                  </div>
+                                      </Link>
                 ))
              ) : (
   <div className="bg-slate-50 border rounded-2xl p-6 text-center">
