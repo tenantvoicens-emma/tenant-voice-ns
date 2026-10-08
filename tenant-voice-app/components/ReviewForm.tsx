@@ -102,28 +102,37 @@ async function submitReview() {
       </select>
 
 <label className="block text-sm font-medium mb-2">
-  Overall Rating
+  Overall Property Rating
 </label>
 
-      <select
-        value={rating}
-        onChange={(e) => setRating(Number(e.target.value))}
-        className="
-                w-full
-                border
-                border-slate-300
-                rounded-xl
-                p-3
-                mb-4
-                bg-white
-              "
-      >
-        <option value={5}>5 Stars</option>
-        <option value={4}>4 Stars</option>
-        <option value={3}>3 Stars</option>
-        <option value={2}>2 Stars</option>
-        <option value={1}>1 Star</option>
-      </select>
+<div className="flex gap-1 mb-4">
+
+  {[1, 2, 3, 4, 5].map((star) => (
+    <button
+      key={star}
+      type="button"
+      onClick={() => setRating(star)}
+      className={`
+  text-3xl
+  transition
+  hover:scale-110
+  ${
+    star <= rating
+      ? 'text-yellow-500'
+      : 'text-slate-300'
+  }
+`}
+
+    >
+      {star <= rating ? '★' : '☆'}
+    </button>
+  ))}
+
+</div>
+
+<p className="text-sm text-slate-500 mb-4">
+  {rating} out of 5 stars
+</p>
 
 <label className="block text-sm font-medium mb-2">
   Review
