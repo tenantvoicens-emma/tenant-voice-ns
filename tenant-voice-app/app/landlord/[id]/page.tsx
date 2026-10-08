@@ -75,10 +75,22 @@ import ReviewList from '../../../components/ReviewList'
  // PAGE LAYOUT
 // ===================================
 
-  return (
-    <main className="min-h-screen bg-slate-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-3xl shadow-xl p-8">
+return (
+  <main className="min-h-screen bg-slate-50 p-6">
+    <div className="max-w-4xl mx-auto">
+      <div className="mb-6">
+        <Link
+          href="/"
+          className="
+            text-blue-600
+            hover:underline
+            "
+            >
+              ← Back to Home
+            </Link>
+       </div>
+                  <div className="bg-white rounded-3xl shadow-xl p-8">
+
 
 {/* LANDLORD HEADER */}
 
