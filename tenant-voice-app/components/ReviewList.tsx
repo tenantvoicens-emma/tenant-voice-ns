@@ -113,6 +113,17 @@ SORT CONTROLS
 =================================== */
 
    <div className="mt-4">
+
+  <div className="mb-4">
+    <h2 className="text-xl font-bold text-slate-800">
+      Reviews
+    </h2>
+
+    <p className="text-sm text-slate-500">
+      {reviews.length} review
+      {reviews.length !== 1 ? 's' : ''}
+    </p>
+  </div>
       <div className="mb-4">
         <label className="mr-2 font-medium">
           Sort Reviews:
@@ -145,12 +156,29 @@ REVIEW CARDS
         {sortedReviews.map((review) => (
           <div
             key={review.id}
-            className="bg-slate-50 rounded-xl p-4"
+            className="
+                bg-white
+                rounded-2xl
+                p-5
+                border
+                border-slate-200
+                shadow-sm
+                hover:shadow-md
+                transition
+              "
           >
             <div className="flex justify-between items-center">
-              <div className="text-yellow-500 text-lg">
+              <div className="flex items-center gap-2">
+
+              <span className="text-yellow-500 text-lg">
                 {'★'.repeat(review.overall_rating)}
-              </div>
+              </span>
+
+              <span className="text-sm text-slate-500">
+                {review.overall_rating}/5
+              </span>
+
+            </div>
 
               <div className="text-sm text-slate-500">
                 {new Date(
@@ -163,9 +191,25 @@ REVIEW CARDS
               </div>
             </div>
 
-            <p className="mt-2 text-slate-700">
-              {review.review_text}
-            </p>
+            <div className="mt-2">
+            <span
+              className="
+                inline-block
+                text-xs
+                bg-slate-100
+                text-slate-600
+                px-2
+                py-1
+                rounded-full
+              "
+            >
+              Anonymous Reviewer
+            </span>
+          </div>
+
+          <p className="mt-3 text-slate-700">
+            {review.review_text}
+          </p>
 
 {/* ===================================
 REPORT CONTROLS
@@ -194,14 +238,20 @@ REPORT CONTROLS
               onClick={() =>
                 reportReview(review.id)
               }
-              className="mt-3 text-sm text-red-600 hover:underline"
+              className="
+              mt-3
+              text-sm
+              text-slate-500
+              hover:text-red-600
+              transition
+            "
             >
               Report Review
             </button>
 
-/* ===================================
+{/* ===================================
 REPORT STATUS MESSAGES
-=================================== */
+=================================== */}
 
             {reportMessages[review.id] && (
               <p className="mt-2 text-sm text-green-600">
