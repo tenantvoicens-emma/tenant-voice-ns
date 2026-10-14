@@ -204,7 +204,12 @@ async function signOut() {
         About
       </Link>
 
-    <span>Resources</span>
+     <Link
+      href="/policies"
+      className="hover:text-blue-600"
+      >
+        Resources
+      </Link>
 
       <Link
       href="/policies"
