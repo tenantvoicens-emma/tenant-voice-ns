@@ -494,7 +494,42 @@ async function signOut() {
     Helping Nova Scotia renters make informed housing decisions.
   </p>
 
-  <p className="text-sm text-slate-400 mt-4">
+  <div className="flex justify-center gap-6 mt-6">
+         <Link
+            href="/about"
+            className="
+                text-blue-600
+                hover:text-blue-700
+                hover:underline
+            "
+            >
+            About
+          </Link>
+
+           <Link
+            href="/resources"
+            className="
+                text-blue-600
+                hover:text-blue-700
+                hover:underline
+            "
+            >
+            Resources
+            </Link>
+
+           <Link
+            href="/policies"
+            className="
+                text-blue-600
+                hover:text-blue-700
+                hover:underline
+            "
+            >
+            Policies
+           </Link>
+  </div>
+
+  <p className="text-sm text-slate-400 mt-6">
     © 2026 Tenant Voice NS
   </p>
 </footer>
