@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { ADMIN_EMAILS } from '../../lib/admins'
 
 export default function AdminPage() {
   const [reviews, setReviews] = useState<any[]>([])
   const [reports, setReports] = useState<any[]>([])
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [loading, setLoading] = useState(true) 
   const [moderationNotes, setModerationNotes] = useState<
   Record<number, string>
 >({})
@@ -19,10 +22,26 @@ export default function AdminPage() {
 })
 
   useEffect(() => {
-    loadReviews()
-    loadReports()
-    loadStats()
+  checkAdmin()
   }, [])
+
+    async function checkAdmin() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      const email = user?.email || ''
+
+      if (ADMIN_EMAILS.includes(email)) {
+        setIsAdmin(true)
+
+        loadReviews()
+        loadReports()
+        loadStats()
+      }
+
+      setLoading(false)
+    }
 
   async function loadStats() {
     const { count: pendingReviews } = await supabase
@@ -188,12 +207,34 @@ if (reviewError) {
     })
     .eq('id', reportId)
 
-if (error) {
-  console.error(error)
-} else {
-  loadReports()
-  loadStats()
-}
+      if (error) {
+        console.error(error)
+      } else {
+        loadReports()
+        loadStats()
+      }
+      }
+
+      if (loading) {
+        return (
+          <div className="p-10">
+            Checking permissions...
+          </div>
+        )
+      }
+      
+if (!isAdmin) {
+  return (
+    <div className="p-10">
+      <h1 className="text-2xl font-bold">
+        Access Denied
+      </h1>
+
+      <p className="mt-2">
+        You do not have permission to view this page.
+      </p>
+    </div>
+  )
 }
 
 return (
