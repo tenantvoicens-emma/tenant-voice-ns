@@ -37,8 +37,10 @@ export default function PoliciesPage() {
             </h2>
 
             <p className="text-slate-700 mb-4">
-              Reviews should be based on first-hand experiences with a
-              landlord, property manager, or rental property.
+               Reviews should be based on the reviewer's own direct experience
+               with a landlord, property manager, or rental property. Reviews
+               based solely on rumors, second-hand information, or speculation
+               may be rejected or removed.
             </p>
 
             <h3 className="font-semibold mb-2">
@@ -72,6 +74,7 @@ export default function PoliciesPage() {
               <li>Content unrelated to a rental experience</li>
             </ul>
           </section>
+          
 
           <section>
             <h2 className="text-2xl font-bold mb-4">
@@ -185,14 +188,48 @@ export default function PoliciesPage() {
           </section>
 
           <section>
+
+          <h2 className="text-2xl font-bold mb-4">
+            Right to Reply and Content Concerns
+          </h2>
+
+          <p className="text-slate-700 mb-4">
+            Tenant Voice NS aims to provide a fair and balanced platform for
+            sharing rental experiences. Landlords, property managers, or other
+            affected parties who believe a review contains inaccurate
+            information may contact Tenant Voice NS to request a review of the
+            content.
+          </p>
+
+            <p className="text-slate-700 mb-4">
+              Requests are evaluated on a case-by-case basis. Submission of a
+              complaint does not automatically result in the removal of content.
+              Moderators may review the available information and determine
+              whether the review complies with Tenant Voice NS policies.
+            </p>
+
+            <p className="text-slate-700">
+              Tenant Voice NS may edit, remove, or retain content following a
+              moderation review. Our goal is to balance transparency for renters
+              with fairness for landlords and property managers.
+            </p>
+</section>
+
+          <section>
             <h2 className="text-2xl font-bold mb-4">
               Contact
             </h2>
 
-            <p className="text-slate-700">
+             <p className="text-slate-700">
               Questions about moderation decisions, review removals, or
               these policies may be directed to the Tenant Voice NS
-              team.
+              team at{' '}
+              <a
+                href="mailto:tenantvoicens@gmail.com"
+                className="text-blue-600 hover:text-blue-700 hover:underline"
+              >
+                tenantvoicens@gmail.com
+              </a>.
             </p>
           </section>
 
