@@ -213,7 +213,7 @@ export default function PoliciesPage() {
               moderation review. Our goal is to balance transparency for renters
               with fairness for landlords and property managers.
             </p>
-</section>
+          </section>
 
           <section>
             <h2 className="text-2xl font-bold mb-4">

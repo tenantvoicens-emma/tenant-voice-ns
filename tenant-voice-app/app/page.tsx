@@ -197,7 +197,12 @@ async function signOut() {
 
   <div className="flex gap-6 items-center">
 
-    <span>About</span>
+     <Link
+      href="/about"
+      className="hover:text-blue-600"
+      >
+        About
+      </Link>
 
     <span>Resources</span>
 
